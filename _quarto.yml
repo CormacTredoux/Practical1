@@ -1,0 +1,12 @@
+project:
+  title: "Practical1"
+  type: website
+  
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+  
+editor: visual
+
