@@ -3,13 +3,10 @@ title: "index"
 format: html
 ---
 
-## Setup
+## 
 
-```{r}
-library(projrsimple)
+```{}
 ```
 
-```{r}
-#| echo: false
-2 * 2
+```{}
 ```
