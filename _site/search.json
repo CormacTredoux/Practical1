@@ -1,0 +1,9 @@
+[
+  {
+    "objectID": "Practical1.html",
+    "href": "Practical1.html",
+    "title": "Practical1",
+    "section": "",
+    "text": "Setup\nRows with missing values\n\nsort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))\n\n [1]   5   6  10  11  25  26  27  32  33  34  35  36  37  39  42  43  45  46  52\n[20]  53  54  55  56  57  58  59  60  61  65  72  75  83  84  96  97  98 102 103\n[39] 107 115 119 150\n\n\nSummary Statistics\nSimple Linear Regression\nFirst principles\n\nX &lt;-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)\nY &lt;-  cars$dist\n\nbetas = (solve(t(X)%*%X))%*%(t(X)%*%Y)\n\nThe estimates found via first principles are\nUsing lm package\n\nmod &lt;- lm(Y~X)\nsummary(mod)\n\n\nCall:\nlm(formula = Y ~ X)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-29.069  -9.525  -2.272   9.215  43.201 \n\nCoefficients: (1 not defined because of singularities)\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept) -17.5791     6.7584  -2.601   0.0123 *  \nX1                NA         NA      NA       NA    \nX2            3.9324     0.4155   9.464 1.49e-12 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 15.38 on 48 degrees of freedom\nMultiple R-squared:  0.6511,    Adjusted R-squared:  0.6438 \nF-statistic: 89.57 on 1 and 48 DF,  p-value: 1.49e-12"
+  }
+]

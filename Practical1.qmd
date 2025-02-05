@@ -49,7 +49,9 @@ Y <-  cars$dist
 betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
 ```
 
-Using R package
+The estimates found via first principles are
+
+Using lm package
 
 ```{r}
 
