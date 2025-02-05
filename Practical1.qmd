@@ -9,7 +9,7 @@ Setup
 attach(airquality)
 ```
 
-Rows with missing value
+Rows with missing values
 
 ```{r}
 sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
