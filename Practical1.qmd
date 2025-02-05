@@ -9,7 +9,7 @@ Setup
 attach(airquality)
 ```
 
-Rows with missing values
+Rows with missing value
 
 ```{r}
 sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
@@ -49,7 +49,7 @@ Y <-  cars$dist
 betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
 ```
 
-The estimates found via first principles are
+The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.
 
 Using lm package
 
@@ -58,3 +58,5 @@ Using lm package
 mod <- lm(Y~X)
 summary(mod)
 ```
+
+These results are confirmed by the lm function.
