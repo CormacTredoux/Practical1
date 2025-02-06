@@ -7,6 +7,7 @@ Setup
 ```{r}
 #| echo: false
 attach(airquality)
+airquality
 ```
 
 Rows with missing values
@@ -46,7 +47,30 @@ First principles
 X <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
 Y <-  cars$dist
 
+#Model coefficient estimates
 betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
+fitted <- X%*%betas #fitted values
+
+#Standard errors
+cov <- solve(t(X)%*%X) #covariance matrix
+SSE <- sum((Y-fitted)**2) #error sum of squares
+n <-  length(Y)
+s <-  sqrt(SSE/(n-2)) #residual standard error
+se1 <- s*sqrt(cov[1]) #standard errors
+se2 <- s*sqrt(cov[4])
+
+#t-values
+t1 <- betas[1]/se1
+t2 <- betas[2]/se2
+
+#p-values
+p1 <- 2*pt(q = t1, df = n-2, lower.tail = FALSE)
+p2 <- 2*pt(q = t2, df = n-2, lower.tail = FALSE)
+
+mod1manual <- list(coefficients = betas, Std.Error = c(round(se1,4),round(se2,4)), tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4)))
+
+help(round)
+
 ```
 
 The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.
@@ -54,9 +78,25 @@ The estimates found via first principles are -17.57905 for the intercept coeffic
 Using lm package
 
 ```{r}
-
-mod <- lm(Y~X)
+X2 <- cars$speed
+mod <- lm(Y~X2)
 summary(mod)
 ```
 
-These results are confirmed by the lm function.
+We will now test to see if the lm function agrees with our first principal results
+
+```{r}
+
+#Model coefficient differences
+summary(mod)[["coefficients"]][, "Estimate"] - mod1manual$Estimate
+
+summary(mod)[["coefficients"]][, "Std. Error"] - mod1manual$Std.Error
+
+summary(mod)[["coefficients"]][, "t value"] - mod1manual$tvalue
+
+summary(mod)[["coefficients"]][, "Pr(>|t|)"] - mod1manual$p
+
+
+```
+
+Since the differences between the appropriate estimates are negligible, we conclude that thge lm model agrees with the first principal calculations.
