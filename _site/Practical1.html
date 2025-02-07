@@ -135,10 +135,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Setup</p>
+<p>This initial analysis in conducted on the airquality dataset, a heading of which is visible b</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   Ozone Solar.R Wind Temp Month Day
+1     41     190  7.4   67     5   1
+2     36     118  8.0   72     5   2
+3     12     149 12.6   74     5   3
+4     18     313 11.5   62     5   4
+5     NA      NA 14.3   56     5   5
+6     28      NA 14.9   66     5   6
+7     23     299  8.6   65     5   7
+8     19      99 13.8   59     5   8
+9      8      19 20.1   61     5   9
+10    NA     194  8.6   69     5  10</code></pre>
+</div>
+</div>
 <p>Rows with missing values</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">union</span>(<span class="fu">which</span>(<span class="fu">is.na</span>(airquality[,<span class="dv">1</span>])), <span class="fu">which</span>(<span class="fu">is.na</span>(airquality[,<span class="dv">2</span>]))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rows <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">union</span>(<span class="fu">which</span>(<span class="fu">is.na</span>(airquality[,<span class="dv">1</span>])), <span class="fu">which</span>(<span class="fu">is.na</span>(airquality[,<span class="dv">2</span>]))))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>rows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]   5   6  10  11  25  26  27  32  33  34  35  36  37  39  42  43  45  46  52
 [20]  53  54  55  56  57  58  59  60  61  65  72  75  83  84  96  97  98 102 103
@@ -146,32 +163,82 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Summary Statistics</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  Stats Tempurature     Ozone
+1   Min    56.00000   1.00000
+2  Mean    77.88235  42.09910
+3    Sd     9.46527  33.27597
+4   Max    97.00000 168.00000</code></pre>
+</div>
+</div>
 <p>Simple Linear Regression</p>
 <p>First principles</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span>  <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">cbind</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">50</span>) ,cars<span class="sc">$</span>speed), <span class="at">nrow =</span> <span class="dv">50</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span>  cars<span class="sc">$</span>dist</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>betas <span class="ot">=</span> (<span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X))<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span>  <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">cbind</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">50</span>) ,cars<span class="sc">$</span>speed), <span class="at">nrow =</span> <span class="dv">50</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span>  cars<span class="sc">$</span>dist</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Function that takes response and predictor data frames, estimates the regression parameters under ordinary least squares estiamtion and outputs the results in a list </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ModelMaker <span class="ot">&lt;-</span> <span class="cf">function</span>(X,Y){</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Model coefficient estimates</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    betas <span class="ot">=</span> (<span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X))<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    fitted <span class="ot">&lt;-</span> X<span class="sc">%*%</span>betas <span class="co">#fitted values</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Standard errors</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    cov <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X) <span class="co">#covariance matrix</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    SSE <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y<span class="sc">-</span>fitted)<span class="sc">**</span><span class="dv">2</span>) <span class="co">#error sum of squares</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span>  <span class="fu">length</span>(Y)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    s <span class="ot">&lt;-</span>  <span class="fu">sqrt</span>(SSE<span class="sc">/</span>(n<span class="dv">-2</span>)) <span class="co">#residual standard error</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    se1 <span class="ot">&lt;-</span> s<span class="sc">*</span><span class="fu">sqrt</span>(cov[<span class="dv">1</span>]) <span class="co">#standard errors</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    se2 <span class="ot">&lt;-</span> s<span class="sc">*</span><span class="fu">sqrt</span>(cov[<span class="dv">4</span>])</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">#t-values</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    t1 <span class="ot">&lt;-</span> betas[<span class="dv">1</span>]<span class="sc">/</span>se1</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    t2 <span class="ot">&lt;-</span> betas[<span class="dv">2</span>]<span class="sc">/</span>se2</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">#p-values</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(<span class="at">q =</span> t1, <span class="at">df =</span> n<span class="dv">-2</span>, <span class="at">lower.tail =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    p2 <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(<span class="at">q =</span> t2, <span class="at">df =</span> n<span class="dv">-2</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">coefficients =</span> <span class="fu">round</span>(betas,<span class="dv">4</span>), <span class="at">Std.Error =</span> <span class="fu">c</span>(<span class="fu">round</span>(se1,<span class="dv">4</span>),<span class="fu">round</span>(se2,<span class="dv">4</span>)),     <span class="at">tvalue =</span> <span class="fu">c</span>(<span class="fu">round</span>(t1,<span class="dv">4</span>),<span class="fu">round</span>(t2,<span class="dv">4</span>)), <span class="at">p =</span> <span class="fu">c</span>(<span class="fu">round</span>(p1,<span class="dv">4</span>),<span class="fu">round</span>(p2,<span class="dv">4</span>))))</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ModelMaker</span>(X,Y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$coefficients
+         [,1]
+[1,] -17.5791
+[2,]   3.9324
+
+$Std.Error
+[1] 6.7584 0.4155
+
+$tvalue
+[1] -2.6011  9.4640
+
+$p
+[1] 0.0123 0.0000</code></pre>
 </div>
-<p>The estimates found via first principles are</p>
-<p>Using lm package</p>
+</div>
+<p>The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.</p>
+<p>Using the lm package, the generated model is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(Y<span class="sc">~</span>X)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = Y ~ X)
+lm(formula = Y ~ X2)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
 -29.069  -9.525  -2.272   9.215  43.201 
 
-Coefficients: (1 not defined because of singularities)
+Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
 (Intercept) -17.5791     6.7584  -2.601   0.0123 *  
-X1                NA         NA      NA       NA    
 X2            3.9324     0.4155   9.464 1.49e-12 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -181,6 +248,32 @@ Multiple R-squared:  0.6511,    Adjusted R-squared:  0.6438
 F-statistic: 89.57 on 1 and 48 DF,  p-value: 1.49e-12</code></pre>
 </div>
 </div>
+<p>We will now test to see if the lm function agrees with our first principal results</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Model coefficient differences</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)[[<span class="st">"coefficients"</span>]][, <span class="st">"Estimate"</span>],<span class="dv">4</span>) <span class="sc">==</span> <span class="fu">ModelMaker</span>(X,Y)<span class="sc">$</span>coefficients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,] TRUE
+[2,] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)[[<span class="st">"coefficients"</span>]][, <span class="st">"Std. Error"</span>],<span class="dv">4</span>) <span class="sc">==</span> <span class="fu">ModelMaker</span>(X,Y)<span class="sc">$</span>Std.Error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)          X2 
+       TRUE        TRUE </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)[[<span class="st">"coefficients"</span>]][, <span class="st">"t value"</span>],<span class="dv">4</span>) <span class="sc">==</span> <span class="fu">ModelMaker</span>(X,Y)<span class="sc">$</span>tvalue</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)          X2 
+       TRUE        TRUE </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(mod)[[<span class="st">"coefficients"</span>]][, <span class="st">"Pr(&gt;|t|)"</span>],<span class="dv">4</span>) <span class="sc">==</span> <span class="fu">ModelMaker</span>(X,Y)<span class="sc">$</span>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)          X2 
+       TRUE        TRUE </code></pre>
+</div>
+</div>
+<p>Since the differences between the appropriate estimates are negligible, we conclude that thge lm model agrees with the first principal calculations.</p>
 
 
 

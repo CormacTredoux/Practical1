@@ -1,28 +1,15 @@
 ---
-title: "Practical1"
+title: "Source Code"
 ---
-
-This initial analysis in conducted on the airquality dataset, a heading of which is visible b
 
 ```{r}
 #| echo: false
 library(tibble)
 data(airquality)
 head(airquality, 10)
-```
 
-Rows with missing values
-
-```{r}
 rows <- sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
-
 rows
-```
-
-Summary Statistics
-
-```{r}
-#| echo: false
 
 #Tempurature summary statistics 
 mean_Temp = mean(airquality$Temp)
@@ -41,19 +28,9 @@ sd_Oz = sd(airquality$Ozone)
 
 df <- data.frame(Stats = c("Min", "Mean", "Sd", "Max"), Tempurature = c(min_Temp, mean_Temp, sd_Temp, max_Temp), Ozone = c(min_Oz, mean_Oz, sd_Oz, max_Oz))
 df
-```
 
-Simple Linear Regression
-
-```{r}
-#| echo: false
-#| message: false
 attach(cars)
-```
 
-First principles
-
-```{r}
 X <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
 Y <-  cars$dist
 
@@ -88,22 +65,10 @@ ModelMaker <- function(X,Y){
 
 ModelMaker(X,Y)
 
-```
-
-The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.
-
-Using the lm package, the generated model is:
-
-```{r}
 #| echo: false
 X2 <- cars$speed
 mod <- lm(Y~X2)
 summary(mod)
-```
-
-We will now test to see if the lm function agrees with our first principal results
-
-```{r}
 
 #Model coefficient differences
 round(summary(mod)[["coefficients"]][, "Estimate"],4) == ModelMaker(X,Y)$coefficients
@@ -114,7 +79,4 @@ round(summary(mod)[["coefficients"]][, "t value"],4) == ModelMaker(X,Y)$tvalue
 
 round(summary(mod)[["coefficients"]][, "Pr(>|t|)"],4) == ModelMaker(X,Y)$p
 
-
 ```
-
-Since the differences between the appropriate estimates are negligible, we conclude that thge lm model agrees with the first principal calculations.
