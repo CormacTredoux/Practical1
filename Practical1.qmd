@@ -6,6 +6,7 @@ Setup
 
 ```{r}
 #| echo: false
+library(tibble)
 attach(airquality)
 airquality
 ```
@@ -13,7 +14,9 @@ airquality
 Rows with missing values
 
 ```{r}
-sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
+rows <- sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
+rows <- as_tibble(rows)
+rows
 ```
 
 Summary Statistics
@@ -27,56 +30,71 @@ min_Temp = min(Temp)
 max_Temp = max(Temp)
 sd_Temp = sd(Temp)
 
+airquality <- na.omit(airquality)
+
 #Ozone Summary statistics
-mean_Oz = mean(Ozone)
-min_Oz = min(Ozone)
-max_Oz = max(Ozone)
-sd_Oz = sd(Ozone)
+mean_Oz = mean(airquality$Ozone)
+min_Oz = min(airquality$Ozone)
+max_Oz = max(airquality$Ozone)
+sd_Oz = sd(airquality$Ozone)
+
+
+df <- data.frame(Stats = c("Min", "Mean", "Sd", "Max"), Tempurature = c(min_Temp, mean_Temp, sd_Temp, max_Temp), Ozone = c(min_Oz, mean_Oz, sd_Oz, max_Oz))
+df
 ```
 
 Simple Linear Regression
 
 ```{r}
 #| echo: false
+#| message: false
 attach(cars)
 ```
 
 First principles
 
 ```{r}
-X <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
-Y <-  cars$dist
+A <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
+B <-  cars$dist
 
-#Model coefficient estimates
-betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
-fitted <- X%*%betas #fitted values
 
-#Standard errors
-cov <- solve(t(X)%*%X) #covariance matrix
-SSE <- sum((Y-fitted)**2) #error sum of squares
-n <-  length(Y)
-s <-  sqrt(SSE/(n-2)) #residual standard error
-se1 <- s*sqrt(cov[1]) #standard errors
-se2 <- s*sqrt(cov[4])
+#Function that takes response and predictor data frames, estimates the regression parameters under ordinary least squares estiamtion and outputs the results in a list called modmanual
+ModelMaker <- function(X,Y){
+  
+    #Model coefficient estimates
+    betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
+    fitted <- X%*%betas #fitted values
+    
+    #Standard errors
+    cov <- solve(t(X)%*%X) #covariance matrix
+    SSE <- sum((Y-fitted)**2) #error sum of squares
+    n <-  length(Y)
+    s <-  sqrt(SSE/(n-2)) #residual standard error
+    se1 <- s*sqrt(cov[1]) #standard errors
+    se2 <- s*sqrt(cov[4])
+    
+    #t-values
+    t1 <- betas[1]/se1
+    t2 <- betas[2]/se2
+    
+    #p-values
+    p1 <- 2*pt(q = t1, df = n-2, lower.tail = TRUE)
+    p2 <- 2*pt(q = t2, df = n-2, lower.tail = FALSE)
+    
+    modmanual <- list(coefficients = round(betas,4), Std.Error = c(round(se1,4),round(se2,4)),     tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4)))
 
-#t-values
-t1 <- betas[1]/se1
-t2 <- betas[2]/se2
+}
 
-#p-values
-p1 <- 2*pt(q = t1, df = n-2, lower.tail = FALSE)
-p2 <- 2*pt(q = t2, df = n-2, lower.tail = FALSE)
-p2
-mod1manual <- list(coefficients = round(betas,4), Std.Error = c(round(se1,4),round(se2,4)), tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4)))
-
+ModelMaker(X,Y)
 
 ```
 
 The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.
 
-Using lm package
+Using the lm package, the generated model is:
 
 ```{r}
+#| echo: false
 X2 <- cars$speed
 mod <- lm(Y~X2)
 summary(mod)
@@ -86,15 +104,14 @@ We will now test to see if the lm function agrees with our first principal resul
 
 ```{r}
 
-mod$coefficients
 #Model coefficient differences
-round(summary(mod)[["coefficients"]][, "Estimate"],4) == mod1manual$Estimate
+round(summary(mod)[["coefficients"]][, "Estimate"],4) == modmanual$coefficients
 
-round(summary(mod)[["coefficients"]][, "Std. Error"],4) == mod1manual$Std.Error
+round(summary(mod)[["coefficients"]][, "Std. Error"],4) == modmanual$Std.Error
 
-round(summary(mod)[["coefficients"]][, "t value"],4) == mod1manual$tvalue
+round(summary(mod)[["coefficients"]][, "t value"],4) == modmanual$tvalue
 
-round(summary(mod)[["coefficients"]][, "Pr(>|t|)"],4) == mod1manual$p
+round(summary(mod)[["coefficients"]][, "Pr(>|t|)"],4) == modmanual$p
 
 
 ```
