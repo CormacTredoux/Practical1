@@ -66,10 +66,9 @@ t2 <- betas[2]/se2
 #p-values
 p1 <- 2*pt(q = t1, df = n-2, lower.tail = FALSE)
 p2 <- 2*pt(q = t2, df = n-2, lower.tail = FALSE)
+p2
+mod1manual <- list(coefficients = round(betas,4), Std.Error = c(round(se1,4),round(se2,4)), tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4)))
 
-mod1manual <- list(coefficients = betas, Std.Error = c(round(se1,4),round(se2,4)), tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4)))
-
-help(round)
 
 ```
 
@@ -87,14 +86,15 @@ We will now test to see if the lm function agrees with our first principal resul
 
 ```{r}
 
+mod$coefficients
 #Model coefficient differences
-summary(mod)[["coefficients"]][, "Estimate"] - mod1manual$Estimate
+round(summary(mod)[["coefficients"]][, "Estimate"],4) == mod1manual$Estimate
 
-summary(mod)[["coefficients"]][, "Std. Error"] - mod1manual$Std.Error
+round(summary(mod)[["coefficients"]][, "Std. Error"],4) == mod1manual$Std.Error
 
-summary(mod)[["coefficients"]][, "t value"] - mod1manual$tvalue
+round(summary(mod)[["coefficients"]][, "t value"],4) == mod1manual$tvalue
 
-summary(mod)[["coefficients"]][, "Pr(>|t|)"] - mod1manual$p
+round(summary(mod)[["coefficients"]][, "Pr(>|t|)"],4) == mod1manual$p
 
 
 ```
