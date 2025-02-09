@@ -1,11 +1,27 @@
 ---
-
+title: "Hand-in 1"
+format: 
+  html: 
+    toc: true
+    toc_float: true
+    number-sections: true
+    theme: default
+execute:
+  echo: true
 ---
 
-## 
+#  {.tabset}
 
-```         
+\# Practicals {.tabset}
+
+## Practical 1
+
+```{r child = "Practical1.qmd"}
+
 ```
 
-```         
+## Practical 2
+
+```{r child = "Lowess.qmd"}
+
 ```
