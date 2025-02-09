@@ -2,7 +2,7 @@
 title: "Practical1"
 ---
 
-This initial analysis in conducted on the airquality dataset, a heading of which is visible b
+This initial analysis in conducted on the airquality dataset, a heading of which is visible below:
 
 ```{r}
 #| echo: false
@@ -14,8 +14,8 @@ head(airquality, 10)
 Rows with missing values
 
 ```{r}
+#| echo: false
 rows <- sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
-
 rows
 ```
 
