@@ -1,0 +1,79 @@
+---
+title: "prac_day_four"
+format: html
+---
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+library(UtilsDataRSV)
+
+```
+
+# Question 1
+
+```{r}
+view_cols(flights)
+
+```
+
+# Question 2
+
+original
+
+```{r}
+flight1 <- flights[flights$month == 1,]
+
+carrier_vec <- unique(flight1$carrier)
+
+carrier_dist_vec_mean <- numeric(length(carrier_vec))
+
+carrier_dist_vec_sd <- numeric(length(carrier_vec))
+
+for (i in seq_along(carrier_vec)) {
+  carrier_dist_vec_mean[i] <- mean(
+    flight1$distance[flight1$carrier == carrier_vec[i]]
+   )
+  carrier_dist_vec_sd[i] <- sd(
+    flight1$distance[flight1$carrier == carrier_vec[i]]
+  )
+}
+
+dist_tbl <- tibble(
+  carrier = carrier_vec,
+  mean_distance = carrier_dist_vec_mean,
+  sd_distance = carrier_dist_vec_sd
+)
+
+dist_tbl[order(dist_tbl$mean_distance), ]
+```
+
+new
+
+```{r}
+
+flight1 <- flights |> 
+  filter(month == 1)
+
+carrier_vec <- flight1 |> 
+  distinct(carrier)
+
+
+carrier_dist_vec_mean <- flight1 |> 
+  group_by(carrier) |> 
+  summarise(mean_distance = mean(distance, na.rm = TRUE)) 
+
+
+carrier_dist_vec_sd <- flight1 |> 
+  group_by(carrier) |> 
+  summarise(sd_distance = sd(distance, na.rm = TRUE))
+
+
+dist_tbl <- inner_join(carrier_dist_vec_mean, carrier_dist_vec_sd)
+
+dist_tbl |> arrange(mean_distance)
+
+
+
+       
+```
