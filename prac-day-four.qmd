@@ -73,7 +73,86 @@ dist_tbl <- inner_join(carrier_dist_vec_mean, carrier_dist_vec_sd)
 
 dist_tbl |> arrange(mean_distance)
 
+#only one obs so dist is mean so no deviations
 
+
+flight1 |> filter(carrier == "YV") |> select(distance) |> distinct()
 
        
+```
+
+# Question 3
+
+The code below counts the number of flights undertaken by the "OO" in month 1; only one flight was undertaken. Since the sample standard deviation is undefined for a sample size of 1 (due to division by 0), the standard deviation is listed as NA.
+
+```{r}
+flight1 |> 
+  filter(,carrier == "OO") |> 
+  summarise(count = n())
+
+```
+
+The following code demonstrates that for carriers with distance standard deviation of 0 have only one distinct distance. This means that the carrier covers the same distance for every flight and hence their mean distance is equal to the distance traveled every flight. There are thus no deviations from the mean and hence no standard deviation.
+
+```{r}
+
+dist_tbl |> 
+  filter(sd_distance == 0) |> 
+  inner_join(flight1) |> 
+  group_by(carrier) |> 
+  summarise(distinct_vals = n_distinct(distance, na.rm = TRUE))
+```
+
+# Question 4
+
+```{r}
+flights |> 
+  group_by(carrier, month) |> 
+  summarise(avg = mean(dep_delay, na.rm = TRUE)) |> 
+    pivot_wider(id_cols = "month", 
+                names_from = carrier,
+                values_from = avg)
+
+```
+
+# Question 5
+
+```{r}
+
+delayed_timely <- flights |> 
+  filter(dep_delay > 0, arr_delay <= 0) |> 
+  summarise(delayed_timely = n()) 
+
+total <- flights |> 
+  summarise(total = n())
+
+tibble(delayed_timely, total, proportion = delayed_timely/total)
+  
+  
+```
+
+# Question 6 
+
+```{r}
+
+
+mult_routes <- flights |> 
+  mutate(route = paste(origin, dest)) |> 
+  group_by(route) |> 
+  summarise(count = n_distinct(carrier)) |> 
+  filter(count > 1)
+
+mult_routes
+
+delay.route.airline <-  flights |> 
+  mutate(route = paste(origin, dest)) |> 
+  inner_join(mult_routes) |> 
+  select(carrier, route, arr_delay) |> 
+  left_join(airlines) |> 
+  group_by(route, name) |> 
+  summarise(Average_delay = mean(arr_delay, na.rm = TRUE)) 
+
+delay.route.airline
+
+
 ```
