@@ -5,26 +5,32 @@ title: "Practical1"
 This initial analysis in conducted on the airquality dataset, a heading of which is visible below:
 
 ```{r}
-#| echo: false
+#| echo :  false
 library(tibble)
+
 data(airquality)
 head(airquality, 10)
+
 ```
+
+# Question 1
 
 Rows with missing values
 
 ```{r}
-#| echo: false
-rows <- sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
+#| echo :  false
+rows <- sort(union(which(is.na(airquality[, 1])), which(is.na(airquality[, 2]))))
 rows
 ```
+
+# Question 2
 
 Summary Statistics
 
 ```{r}
-#| echo: false
+#| echo :  false
 
-#Tempurature summary statistics 
+#Tempurature summary statistics
 mean_Temp = mean(airquality$Temp)
 min_Temp = min(airquality$Temp)
 max_Temp = max(airquality$Temp)
@@ -39,65 +45,83 @@ max_Oz = max(airquality$Ozone)
 sd_Oz = sd(airquality$Ozone)
 
 
-df <- data.frame(Stats = c("Min", "Mean", "Sd", "Max"), Tempurature = c(min_Temp, mean_Temp, sd_Temp, max_Temp), Ozone = c(min_Oz, mean_Oz, sd_Oz, max_Oz))
+df <- data.frame(
+  Stats = c("Min", "Mean", "Sd", "Max"),
+  Tempurature = c(min_Temp, mean_Temp, sd_Temp, max_Temp),
+  Ozone = c(min_Oz, mean_Oz, sd_Oz, max_Oz)
+)
 df
 ```
+
+# Question 3
 
 Simple Linear Regression
 
 ```{r}
-#| echo: false
-#| message: false
+#| echo :  false
+#| message :  false
 attach(cars)
 ```
 
 First principles
 
 ```{r}
-X <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
+X <-  matrix(data = cbind(rep(1, 50) , cars$speed),
+             nrow = 50,
+             ncol = 2)
 Y <-  cars$dist
 
 
 
-#Function that takes response and predictor data frames, estimates the regression parameters under ordinary least squares estiamtion and outputs the results in a list 
-ModelMaker <- function(X,Y){
+#Function that takes response and predictor data frames, estimates the regression parameters under ordinary least squares estiamtion and outputs the results in a list
+ModelMaker <- function(X, Y) {
+  #Model coefficient estimates
+  betas = (solve(t(X) %*% X)) %*% (t(X) %*% Y)
+  fitted <- X %*% betas #fitted values
   
-    #Model coefficient estimates
-    betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
-    fitted <- X%*%betas #fitted values
-    
-    #Standard errors
-    cov <- solve(t(X)%*%X) #covariance matrix
-    SSE <- sum((Y-fitted)**2) #error sum of squares
-    n <-  length(Y)
-    s <-  sqrt(SSE/(n-2)) #residual standard error
-    se1 <- s*sqrt(cov[1]) #standard errors
-    se2 <- s*sqrt(cov[4])
-    
-    #t-values
-    t1 <- betas[1]/se1
-    t2 <- betas[2]/se2
-    
-    #p-values
-    p1 <- 2*pt(q = t1, df = n-2, lower.tail = TRUE)
-    p2 <- 2*pt(q = t2, df = n-2, lower.tail = FALSE)
-    
-    return(list(coefficients = round(betas,4), Std.Error = c(round(se1,4),round(se2,4)),     tvalue = c(round(t1,4),round(t2,4)), p = c(round(p1,4),round(p2,4))))
-
+  #Standard errors
+  cov <- solve(t(X) %*% X) #covariance matrix
+  SSE <- sum((Y - fitted) ** 2) #error sum of squares
+  n <-  length(Y)
+  s <-  sqrt(SSE / (n - 2)) #residual standard error
+  se1 <- s * sqrt(cov[1]) #standard errors
+  se2 <- s * sqrt(cov[4])
+  
+  #t-values
+  t1 <- betas[1] / se1
+  t2 <- betas[2] / se2
+  
+  #p-values
+  p1 <- 2 * pt(q = t1,
+               df = n - 2,
+               lower.tail = TRUE)
+  p2 <- 2 * pt(q = t2,
+               df = n - 2,
+               lower.tail = FALSE)
+  
+  return(list(
+    coefficients = round(betas, 4),
+    Std.Error = c(round(se1, 4), round(se2, 4)),
+    tvalue = c(round(t1, 4), round(t2, 4)),
+    p = c(round(p1, 4), round(p2, 4))
+  ))
+  
 }
 
-ModelMaker(X,Y)
+ModelMaker(X, Y)
 
 ```
 
 The estimates found via first principles are -17.57905 for the intercept coefficient and 3.932409 for the slope coefficient.
 
+# Question 4
+
 Using the lm package, the generated model is:
 
 ```{r}
-#| echo: false
+#| echo :  false
 X2 <- cars$speed
-mod <- lm(Y~X2)
+mod <- lm(Y ~ X2)
 summary(mod)
 ```
 
@@ -105,15 +129,15 @@ We will now test to see if the lm function agrees with our first principal resul
 
 ```{r}
 
+
 #Model coefficient differences
-round(summary(mod)[["coefficients"]][, "Estimate"],4) == ModelMaker(X,Y)$coefficients
+round(summary(mod)[["coefficients"]][, "Estimate"], 4) == ModelMaker(X, Y)$coefficients
 
-round(summary(mod)[["coefficients"]][, "Std. Error"],4) == ModelMaker(X,Y)$Std.Error
+round(summary(mod)[["coefficients"]][, "Std. Error"], 4) == ModelMaker(X, Y)$Std.Error
 
-round(summary(mod)[["coefficients"]][, "t value"],4) == ModelMaker(X,Y)$tvalue
+round(summary(mod)[["coefficients"]][, "t value"], 4) == ModelMaker(X, Y)$tvalue
 
-round(summary(mod)[["coefficients"]][, "Pr(>|t|)"],4) == ModelMaker(X,Y)$p
-
+round(summary(mod)[["coefficients"]][, "Pr(>|t|)"], 4) == ModelMaker(X, Y)$p
 
 ```
 

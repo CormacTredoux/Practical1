@@ -3,45 +3,65 @@ title: "Lowess"
 ---
 
 ```{r}
+#Setting seed for reproducibility
 set.seed(1)
 
-X <- seq(1,100)
-e <- rnorm(100, 0, (0.2)**2)
-Y <- sin(X/10) + e
+#Randomly generating the sequences
+X <- seq(1, 100)
+e <- rnorm(100, 0, (0.2) ** 2)
+Y <- sin(X / 10) + e
 
-custom_lowess <- function(x,y,f){
-  
+custom_lowess <- function(x, y, f) {
   n <- length(y)
-  x <- matrix(data = cbind(rep(1,n), x), nrow = n , ncol = 2)
-  k <- floor(f*n)
+  
+  #Binding the predictor matrix with a column of ones to generate the intercept coefficient estimate
+  x <- matrix(data = cbind(rep(1, n), x),
+              nrow = n ,
+              ncol = 2)
+  #Deriving k
+  k <- floor(f * n)
+  
+  #Creating space for the weights and the fitted values
   w <- rep(NA, n)
-  yhat <- rep(NA,n)
+  yhat <- rep(NA, n)
   
-  for(i in 1:n)
-    {
-    dists <- abs(rep(x[i,2],n) - x[,2])
-    dmax <- sort(dists)[k]
-  
+  for (i in 1:n)
+  {
+    #Computing the distances
+    dists <- abs(rep(x[i, 2], n) - x[, 2])
     
-    for(j in 1:n){
-      if((abs(x[j,2] - x[i,2]) > dmax)){
+    #Max distance
+    dmax <- sort(dists)[k]
+    
+    
+    #Assigning weights to each neighbour
+    for (j in 1:n) {
+      if ((abs(x[j, 2] - x[i, 2]) > dmax)) {
         w[j] <- 0
       }
       else{
-        w[j] <- (1 - (abs(x[j,2]-x[i,2])/dmax)**3)**3
+        w[j] <- (1 - (abs(x[j, 2] - x[i, 2]) / dmax) ** 3) ** 3
       }
     }
-  
-  
-   W <- diag(x = w, nrow = n, ncol = n)
-   Beta <- solve(t(x)%*%W%*%x)%*%t(x)%*%W%*%y
-   yhat[i] <- Beta[1] + Beta[2]*x[i,2]
+    
+    #Creating a diagonal matrix from the weights 
+    W <- diag(x = w, nrow = n, ncol = n)
+    
+    #Computing the beta coefficient estimates
+    Beta <- solve(t(x) %*% W %*% x) %*% t(x) %*% W %*% y
+    
+    #Computing fitted values
+    yhat[i] <- Beta[1] + Beta[2] * x[i, 2]
   }
   return(yhat)
 }
 
-round(custom_lowess(X,Y,0.5),5) == round(lowess(X,Y,f = 0.5, iter = 0)$y, 5)
-
-
-
 ```
+
+Let's now check that this returns the same values as the lowess function
+
+```{r}
+round(custom_lowess(X, Y, 0.5), 5) == round(lowess(X, Y, f = 0.5, iter = 0)$y, 5)
+```
+
+Clearly all the values are equivalent to that of the lowess function.
