@@ -19,8 +19,7 @@ head(airquality, 10)
 Rows with missing values
 
 ```{r}
-#|echo:  false
-#|
+
 rows <- sort(union(which(is.na(airquality[, 1])), which(is.na(airquality[, 2]))))
 rows
 ```
@@ -30,7 +29,7 @@ rows
 Summary Statistics
 
 ```{r}
-#|echo:  false
+
 
 #Tempurature summary statistics
 mean_Temp = mean(airquality$Temp)
@@ -60,8 +59,7 @@ df
 Simple Linear Regression
 
 ```{r}
-#|echo :  false
-#|message :  false
+
 attach(cars)
 ```
 
@@ -121,7 +119,7 @@ The estimates found via first principles are -17.57905 for the intercept coeffic
 Using the lm package, the generated model is:
 
 ```{r}
-#|echo:  false
+
 X2 <- cars$speed
 mod <- lm(Y ~ X2)
 summary(mod)

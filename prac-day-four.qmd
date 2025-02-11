@@ -24,6 +24,7 @@ view_cols(flights)
 Below the required code is rewritten using dplyr and the pipe operator
 
 ```{r}
+#| warning: false
 
 flight1 <- flights |> 
   filter(month == 1)
@@ -61,6 +62,7 @@ flight1 |>
 The following code demonstrates that for carriers with distance standard deviation of 0 have only one distinct distance. This means that the carrier covers the same distance for every flight and hence their mean distance is equal to the distance traveled every flight. There are thus no deviations from the mean and hence no standard deviation.
 
 ```{r}
+#| warning: false
 
 dist_tbl |> 
   filter(sd_distance == 0) |> 
@@ -119,8 +121,9 @@ mult_routes
 Below are the delays for each airline on each such route
 
 ```{r}
+#| warning: false
 
-#Delays for each airline on each such route
+
 
 delay.route.airline <-  flights |> 
   mutate(route = paste(origin, dest)) |> 
@@ -137,8 +140,8 @@ delay.route.airline
 Below are calculations of the best and worst airlines in terms of average arrival delay for the aforementioned routes.
 
 ```{r}
+#| warning: false
 
-#Calculating best and worst arrival delays
 best <- delay.route.airline |> 
   group_by(route) |> 
   summarise(Average_delay = min(Average_delay, na.rm = TRUE)) |> 
@@ -170,25 +173,19 @@ tbl |>
 Clearly the route with greatest difference between the best and worst performing airline is JFK ATL.
 
 ```{r}
-tbl |> 
-  filter(route == "JFK ATL")
+#| warning: false
 
 flights |> 
   inner_join(airlines) |> 
-  filter(name == "Endeavor Air Inc.") |> 
-  mutate(route = paste(origin, dest))
+  mutate(route = paste(origin, dest)) |> 
+  filter(route == "JFK ATL") |> 
+  group_by(name) |> 
+  summarise(count = n())
 
-flights |> 
-  inner_join(airlines) |> 
-  filter(name == "ExpressJet Airlines Inc.") |> 
-  mutate(route = paste(origin, dest)) 
-
-
-flights |> 
-  arrange(distance)
   
-
 ```
+
+As is visible above, there are relatively few airlines which fly this route, furthermore ExpressJet Airlines (which had the worst delay) was only recorded flying this route once where as Endeavor Airlines (which had the best delay) was recorded flying this route 55 times. The route is clearly unfamiliar to ExpressJet and very familiar to Endeavor Airlines resulting in this great variance.
 
 # Question 7
 
@@ -297,6 +294,8 @@ NA, 77, 80, 115, 85, 88, 109, NA, 71, 90, 94, 91, 87, 113, 93,
 The code below generates a report/summary of the columns of the data frame.
 
 ```{r}
+#| warning: false
+
 data |> 
   view_cols()
 ```
