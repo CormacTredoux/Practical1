@@ -1,5 +1,5 @@
 ---
-title: "Hand-in 1"
+title: "Home Page"
 format: 
   html: 
     toc: true
@@ -10,18 +10,6 @@ execute:
   echo: true
 ---
 
-#  {.tabset}
+This project consists of three practicals namely, Practical 1, Lowess and prac-day-four.
 
-\# Practicals {.tabset}
-
-## Practical 1
-
-```{r child = "Practical1.qmd"}
-
-```
-
-## Practical 2
-
-```{r child = "Lowess.qmd"}
-
-```
+Each of the practicals are available via the tabs on the left.

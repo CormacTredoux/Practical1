@@ -1,8 +1,28 @@
 project:
-  title: "Practical1"
-  type: website
+  title: "Hand-in 1"
+  type: book
+  output-dir: _site
   
+website: 
+  navbar: 
+    left:
+      - href: index.qmd
+      - text: Home
+      - href: Practical1.qmd
+      - text: Second page
+      - href: Lowess.qmd
+      - text: Third page
+      - href: prac-day-four.qmd
+      - text: Fourth page
 
+book: 
+  chapters: 
+    - index.qmd
+    - Practical1.qmd
+    - Lowess.qmd
+    - prac-day-four.qmd
+  
+  
 format:
   html:
     toc: true
