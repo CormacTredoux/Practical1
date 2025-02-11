@@ -8,9 +8,9 @@ website:
     left:
       - href: index.qmd
       - text: Home
-      - href: Practical1.qmd
+      - href: prac1.qmd
       - text: Second page
-      - href: Lowess.qmd
+      - href: prac2.qmd
       - text: Third page
       - href: prac-day-four.qmd
       - text: Fourth page
@@ -18,8 +18,8 @@ website:
 book: 
   chapters: 
     - index.qmd
-    - Practical1.qmd
-    - Lowess.qmd
+    - prac1.qmd
+    - prac2.qmd
     - prac-day-four.qmd
   
   

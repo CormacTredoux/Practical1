@@ -5,8 +5,7 @@ title: "Practical1"
 This initial analysis in conducted on the airquality dataset, a heading of which is visible below:
 
 ```{r}
-#|echo: false
-#|
+
 library(tibble)
 
 data(airquality)
