@@ -13,3 +13,7 @@ execute:
 This project consists of three practicals namely, Practical 1, Lowess and prac-day-four.
 
 Each of the practicals are available via the tabs on the left.
+
+Below is the link to my GitHub repository containing the practical.
+
+<https://github.com/CormacTredoux/Practical1>
