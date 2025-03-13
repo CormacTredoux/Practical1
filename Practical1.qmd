@@ -1,0 +1,60 @@
+---
+title: "Practical1"
+---
+
+Setup
+
+```{r}
+#| echo: false
+attach(airquality)
+```
+
+Rows with missing values
+
+```{r}
+sort(union(which(is.na(airquality[,1])), which(is.na(airquality[,2]))))
+```
+
+Summary Statistics
+
+```{r}
+#| echo: false
+
+#Tempurature summary statistics 
+mean_Temp = mean(Temp)
+min_Temp = min(Temp)
+max_Temp = max(Temp)
+sd_Temp = sd(Temp)
+
+#Ozone Summary statistics
+mean_Oz = mean(Ozone)
+min_Oz = min(Ozone)
+max_Oz = max(Ozone)
+sd_Oz = sd(Ozone)
+```
+
+Simple Linear Regression
+
+```{r}
+#| echo: false
+attach(cars)
+```
+
+First principles
+
+```{r}
+X <-  matrix(data = cbind(rep(1, 50) ,cars$speed), nrow = 50, ncol = 2)
+Y <-  cars$dist
+
+betas = (solve(t(X)%*%X))%*%(t(X)%*%Y)
+```
+
+The estimates found via first principles are
+
+Using lm package
+
+```{r}
+
+mod <- lm(Y~X)
+summary(mod)
+```

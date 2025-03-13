@@ -7,7 +7,7 @@ This initial analysis in conducted on the airquality dataset, a heading of which
 ```{r}
 
 library(tibble)
-
+s
 data(airquality)
 head(airquality, 10)
 
